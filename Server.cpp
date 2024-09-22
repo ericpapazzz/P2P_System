@@ -1,3 +1,8 @@
+// Server.cpp
+
+#ifndef SERVER_H
+#define SERVER_H
+
 #include "Server.h"
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -36,7 +41,7 @@ public:
 		server_address.sin_port = htons(port);
 
 		// enlazar el socket con la direccion IP y puerto
-		if (bind(server_socket, (struct sockaddr*)&server_address, sizeof(server_address)) == SOCKET_ERROR);
+		if (bind(server_socket, (struct sockaddr*)&server_address, sizeof(server_address)) == SOCKET_ERROR)
 		{
 			std::cerr << "Error al enlazar socket: " << WSAGetLastError() << std::endl;
 			closesocket(server_socket);
@@ -62,3 +67,5 @@ public:
 		WSACleanup();
 	}
 };
+
+#endif // SERVER_H
