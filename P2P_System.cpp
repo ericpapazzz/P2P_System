@@ -4,14 +4,51 @@
 #include "Server.h"
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <string.h>
+#include <stdio.h>
 
 #pragma comment(lib, "ws2_32.lib")  // Enlazar con la biblioteca Winsock
 
 // funcion que correra el server en un thread separado
 static void* server_function(void *arg) {
-	//Server server((int)AF_INET,SOCK_STREAM, 0, INADDR_ANY, 20);
+	Server server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, 1248, 20);
+	sockaddr* address = (struct sockaddr*)&server.server_address;
+	int address_len = sizeof(server.server_address);
+
+	//si
+	while (true)
+	{
+		SOCKET client_socket = accept(server.server_socket, address, &address_len); // aceptar conexion del cliente
+		if (client_socket==INVALID_SOCKET)
+		{
+			std::cerr << "Error al aceptar conexion: " << WSAGetLastError() << std::endl;
+			continue;
+		}
+
+		// leer el request
+		char request[255];
+		memset(request, 0, sizeof(request));
+
+		int bytes_received = recv(client_socket, request, sizeof(request), 0);
+		if (bytes_received == SOCKET_ERROR)
+		{
+			std::cerr << "Error al recibir datos: " << WSAGetLastError() << std::endl;
+		}
+		else {
+			std::cout << "Request recibido: " << request << std::endl;
+		}
+
+		// enviar respuesta
+		const char* response = "Mensaje recibido";
+		send(client_socket, response, (int)strlen(response), 0);
+
+		//cerrar conexion con el cliente
+		closesocket(client_socket);
+		
+	}
 	return NULL;
 }
+
 
 int main()
 {
