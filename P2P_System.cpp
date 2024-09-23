@@ -8,8 +8,8 @@
 #pragma comment(lib, "ws2_32.lib")  // Enlazar con la biblioteca Winsock
 
 // funcion que correra el server en un thread separado
-void* server_function(void *arg) {
-	//Server server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, 1248, 20);
+static void* server_function(void *arg) {
+	//Server server((int)AF_INET,SOCK_STREAM, 0, INADDR_ANY, 20);
 	return NULL;
 }
 
