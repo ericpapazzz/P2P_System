@@ -15,7 +15,7 @@ static void* server_function(void *arg) {
 	sockaddr* address = (struct sockaddr*)&server.server_address;
 	int address_len = sizeof(server.server_address);
 
-	//si
+	
 	while (true)
 	{
 		SOCKET client_socket = accept(server.server_socket, address, &address_len); // aceptar conexion del cliente
