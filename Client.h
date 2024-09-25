@@ -17,6 +17,9 @@ public:
     // Método para conectarse al servidor
     bool connect_to_server();
 
+    // Método para enviar una solicitud al servidor
+    bool send_request(const char* request);
+
     // Destructor
     ~Client();
 };

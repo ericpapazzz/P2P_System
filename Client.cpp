@@ -15,14 +15,14 @@ Client::Client(int domain, int service, int protocol, const char* server_ip, int
     // crear el socket
     client_socket = socket(domain, service, protocol);
     if (client_socket == INVALID_SOCKET) {
-        std::cerr << "Error al crear socket: " << WSAGetLastError << std::endl;
+        std::cerr << "Error al crear socket: " << WSAGetLastError() << std::endl;
         WSACleanup();
         exit(EXIT_FAILURE);
     }
 
     //configurar la direccion del servidor
     server_address.sin_family = domain;
-    server_address.sin_family = htons(port);
+    server_address.sin_port = htons(port);
 
     // Convertir la dirección IP del servidor
     if (inet_pton(domain,server_ip,&server_address.sin_addr)<=0)
@@ -39,7 +39,7 @@ Client::Client(int domain, int service, int protocol, const char* server_ip, int
     int result = connect(client_socket,(struct sockaddr*)&server_address, sizeof(server_address));
     if (result==SOCKET_ERROR)
     {
-        std::cerr << "Error al conectarse al servidor: " << WSAGetLastError << std::endl;
+        std::cerr << "Error al conectarse al servidor: " << WSAGetLastError() << std::endl;
         closesocket(client_socket);
         WSACleanup();
         return false;
@@ -48,8 +48,25 @@ Client::Client(int domain, int service, int protocol, const char* server_ip, int
     return true;
     }
 
+    bool Client::send_request(const char* request) {
+        // Enviar la solicitud al servidor
+        int send_result = send(client_socket, request, (int)strlen(request), 0);
+        if (send_result == SOCKET_ERROR) {
+            std::cerr << "Error al enviar la solicitud: " << WSAGetLastError() << std::endl;
+            closesocket(client_socket);
+            WSACleanup();
+            return false;
+        }
+
+        std::cout << "Solicitud enviada: " << request << std::endl;
+
+        // Cerrar el socket después de enviar
+        closesocket(client_socket);
+        return true;
+    }
+
     // destructor
     Client::~Client() {
         closesocket(client_socket);
-        WSACleanup;
+        WSACleanup();
     }

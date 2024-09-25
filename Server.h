@@ -6,8 +6,7 @@
 
 #pragma comment(lib, "ws2_32.lib")  // Enlazar con la biblioteca Winsock
 
-class Server
-{
+class Server{
 public:
     SOCKET server_socket;
     struct sockaddr_in server_address;

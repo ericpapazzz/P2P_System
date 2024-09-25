@@ -2,6 +2,7 @@
 #include <iostream>
 #include <thread>
 #include "Server.h"
+#include "Client.h"
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <string.h>
@@ -49,6 +50,11 @@ static void* server_function(void *arg) {
 	return NULL;
 }
 
+static void client_function(char* request) {
+	Client client(AF_INET, SOCK_STREAM, 0, "127.0.0.1", 1248);
+	client.send_request(request);
+}
+
 
 int main()
 {
@@ -57,6 +63,14 @@ int main()
 
 	// esperar a que el thread termine
 	server_thread.join();
+
+	while (true)
+	{
+		char request[255];
+		memset(request,0, 255);
+		fgets(request, 255, stdin);
+		client_function(request);
+	}
 
 	return 0;
 }	
