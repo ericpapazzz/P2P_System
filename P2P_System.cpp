@@ -11,7 +11,7 @@
 #pragma comment(lib, "ws2_32.lib")  // Enlazar con la biblioteca Winsock
 
 // funcion que correra el server en un thread separado
-static void* server_function(void *arg) {
+void server_function() {
 	Server server(AF_INET, SOCK_STREAM, 0, INADDR_ANY, 1248, 20);
 	sockaddr* address = (struct sockaddr*)&server.server_address;
 	int address_len = sizeof(server.server_address);
@@ -42,35 +42,40 @@ static void* server_function(void *arg) {
 		// enviar respuesta
 		const char* response = "Mensaje recibido";
 		send(client_socket, response, (int)strlen(response), 0);
+		std::cout << request << std::endl;
 
 		//cerrar conexion con el cliente
 		closesocket(client_socket);
 		
 	}
-	return NULL;
 }
 
-static void client_function(char* request) {
-	Client client(AF_INET, SOCK_STREAM, 0, "127.0.0.1", 1248);
+void client_function(char* request) {
+	Client client(AF_INET, SOCK_STREAM, 0, "192.168.1.66", 1248);
 	client.send_request(request);
 }
 
 
 int main()
 {
-	// crear thread para el server
+	// Crear thread para el server
 	std::thread server_thread(server_function);
 
-	// esperar a que el thread termine
-	server_thread.join();
+	// Esperar un momento para asegurarnos de que el servidor esté en escucha
+	std::this_thread::sleep_for(std::chrono::seconds(1));
 
+	// Iniciar la interacción del cliente
 	while (true)
 	{
 		char request[255];
-		memset(request,0, 255);
+		memset(request, 0, 255);
+		std::cout << "Ingrese su mensaje: "; // Mensaje para indicar que se puede ingresar
 		fgets(request, 255, stdin);
 		client_function(request);
 	}
+
+	// Esperar a que el thread termine (esto probablemente no se alcanzará en este bucle infinito)
+	server_thread.join();
 
 	return 0;
 }	

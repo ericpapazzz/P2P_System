@@ -24,7 +24,7 @@ Client::Client(int domain, int service, int protocol, const char* server_ip, int
     server_address.sin_family = domain;
     server_address.sin_port = htons(port);
 
-    // Convertir la dirección IP del servidor
+    // Convertir la dirección IP del servidor a binario
     if (inet_pton(domain,server_ip,&server_address.sin_addr)<=0)
     {
         std::cerr << "Direccion IP no valida o no aceptada: " << WSAGetLastError()<<std::endl;
